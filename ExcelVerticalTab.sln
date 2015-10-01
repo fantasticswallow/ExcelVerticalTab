@@ -1,0 +1,28 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 14
+VisualStudioVersion = 14.0.23107.0
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ExcelVerticalTab", "ExcelVerticalTab\ExcelVerticalTab.csproj", "{54477A1F-C37E-4CC4-B5AC-10492E2E5861}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VerticalTabControl", "VerticalTabControl\VerticalTabControl.csproj", "{CEEA8758-B4B7-4931-B3CC-DF41EEF15559}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{54477A1F-C37E-4CC4-B5AC-10492E2E5861}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{54477A1F-C37E-4CC4-B5AC-10492E2E5861}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{54477A1F-C37E-4CC4-B5AC-10492E2E5861}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{54477A1F-C37E-4CC4-B5AC-10492E2E5861}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CEEA8758-B4B7-4931-B3CC-DF41EEF15559}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CEEA8758-B4B7-4931-B3CC-DF41EEF15559}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CEEA8758-B4B7-4931-B3CC-DF41EEF15559}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CEEA8758-B4B7-4931-B3CC-DF41EEF15559}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
