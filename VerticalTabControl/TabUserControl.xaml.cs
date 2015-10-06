@@ -25,13 +25,23 @@ namespace VerticalTabControlLib
         {
             InitializeComponent();
         }
+
+        private void CmdRefresh_OnClick(object sender, RoutedEventArgs e)
+        {
+            var vm = DataContext as ITabUserControlViewModel;
+            vm?.Refresh_Required();
+        }
     }
 
-    public interface ITabUserControlViewModel<T> 
+    public interface ITabUserControlViewModel
+    {
+        void Refresh_Required();
+    }
+
+    public interface ITabUserControlViewModel<T> : ITabUserControlViewModel
     {
         ObservableCollection<T> Items { get; set; }
         T SelectedItem { get; set; }
-         
     }
 
     internal class TabUserControlViewModelMock : ITabUserControlViewModel<object>
@@ -39,6 +49,11 @@ namespace VerticalTabControlLib
         public ObservableCollection<object> Items { get; set; } = new ObservableCollection<object>();
 
         public object SelectedItem { get; set; }
+
+        public void Refresh_Required()
+        {
+            throw new NotImplementedException();
+        }
     }
 
 

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
@@ -50,6 +51,17 @@ namespace ExcelVerticalTab
             TargetWorkbook.SheetActivate += TargetWorkbook_SheetActivate;
         }
 
+        private void RemoveHandler()
+        {
+            // シート追加時
+            TargetWorkbook.NewSheet -= TargetWorkbook_NewSheet;
+            // シート削除前
+            TargetWorkbook.SheetBeforeDelete -= TargetWorkbook_SheetBeforeDelete;
+            // シートアクティブ
+            TargetWorkbook.SheetActivate -= TargetWorkbook_SheetActivate;
+
+        }
+
         public void SyncWorksheets()
         {
             Items.Clear();
@@ -83,13 +95,21 @@ namespace ExcelVerticalTab
             var sheet = Sh as Worksheet;
             if (sheet == null) return;
 
+            Debug.WriteLine($"{sheet.Name} is Activate");
+
             SelectedItem = GetSheetHandler(sheet);
+        }
+
+        public void Refresh_Required()
+        {
+            SyncWorksheets();
         }
 
         public event EventHandler<EventArgs<SheetHandler>> SelectedSheetChanged;
 
         protected void OnSelectedSheetChanged(SheetHandler sheetHandler)
         {
+            Debug.WriteLineIf(sheetHandler != null, $"{sheetHandler?.TargetSheet.Name} is Selected");
             sheetHandler?.TargetSheet.Activate();
             SelectedSheetChanged?.Invoke(this, Helper.CreateEventArgs(sheetHandler));
         }
@@ -103,7 +123,7 @@ namespace ExcelVerticalTab
             {
                 if (disposing)
                 {
-                    // TODO: マネージ状態を破棄します (マネージ オブジェクト)。
+                    RemoveHandler();
                 }
 
                 // TODO: アンマネージ リソース (アンマネージ オブジェクト) を解放し、下のファイナライザーをオーバーライドします。

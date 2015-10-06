@@ -38,7 +38,6 @@ namespace ExcelVerticalTab
             pane.Visible = true;
             
             this.Application.WorkbookActivate += Application_WorkbookActivate;
-            
         }
 
         private void Application_WorkbookActivate(Excel.Workbook Wb)
