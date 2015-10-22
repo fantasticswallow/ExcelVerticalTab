@@ -106,23 +106,33 @@
             <Setter Property="Margin" Value="2"/>
             <Setter Property="Content" Value="Refresh"/>
         </Style>
+        <Style x:Key="TextBoxStyle" TargetType="{x:Type TextBox}">
+            <Setter Property="Margin" Value="2"/>
+        </Style>
     </UserControl.Resources>
     <Grid>
         <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
-        <ListBox d:DataContext="{d:DesignInstance {x:Type local:TabUserControlViewModelMock}}"
+        <TextBox d:DataContext="{d:DesignInstance {x:Type local:TabUserControlViewModelMock}}" 
+                 Style="{StaticResource TextBoxStyle}"
+                 Text="{Binding InputToFilter, UpdateSourceTrigger=PropertyChanged}"/>
+        
+        <ListBox x:Name="lstTab" 
+                 d:DataContext="{d:DesignInstance {x:Type local:TabUserControlViewModelMock}}"
+                 Grid.Row="1"
                  Style="{StaticResource ListBoxStyle}"
                  SelectedItem="{Binding SelectedItem}"
-                 ItemsSource="{Binding Items}"
+                 ItemsSource="{Binding ItemsView}"
                  ItemContainerStyle="{StaticResource TabItemStyle}">
 
         </ListBox>
 
         <Button x:Name="cmdRefresh" Style="{StaticResource RefreshButtonStyle}"
-                Grid.Row="1"
+                Grid.Row="2"
                 Click="CmdRefresh_OnClick"/>
     </Grid>
 </UserControl>

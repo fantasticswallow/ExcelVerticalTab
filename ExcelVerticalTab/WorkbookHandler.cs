@@ -4,13 +4,17 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
+using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Windows.Data;
 using ExcelVerticalTab.Annotations;
 using Microsoft.Office.Interop.Excel;
 using VerticalTabControlLib;
+using VerticalTabControlLib.Migemo;
 
 namespace ExcelVerticalTab
 {
@@ -40,6 +44,57 @@ namespace ExcelVerticalTab
             }
         }
         #endregion
+
+        #region ItemsView
+        private ICollectionView _itemsView;
+        public ICollectionView ItemsView
+        {
+            get { return _itemsView ?? (_itemsView = CollectionViewSource.GetDefaultView(Items)); }
+            set { _itemsView = value; }
+        }
+        #endregion
+
+        #region InputToFilter
+        private string _inputToFilter;
+        public string InputToFilter
+        {
+            get { return _inputToFilter; }
+
+            set
+            {
+                if (EqualityComparer<string>.Default.Equals(_inputToFilter, value)) return;
+
+                _inputToFilter = value;
+                OnPropertyChanged();
+                ExecuteFilter();
+            }
+        }
+        #endregion
+
+        private Regex filterRegex;
+        private void ExecuteFilter()
+        {
+            if (string.IsNullOrWhiteSpace(InputToFilter))
+            {
+                ItemsView.Filter = null;
+                ItemsView.Refresh();
+                return;
+            }
+
+            //using (var m = Migemo.GetDefault())
+            //{
+            //    filterRegex = m.GetRegex(InputToFilter);
+            //}
+
+            Predicate<object> filter = x =>
+            {
+                var s = x as SheetHandler;
+                return (s?.Header ?? "").Contains(InputToFilter); // filterRegex.IsMatch(s?.Header ?? "");
+            };
+
+            ItemsView.Filter = filter;
+            // Refresh呼ぶべきなのか
+        }
 
         private void Initialize()
         {
@@ -110,8 +165,14 @@ namespace ExcelVerticalTab
         protected void OnSelectedSheetChanged(SheetHandler sheetHandler)
         {
             Debug.WriteLineIf(sheetHandler != null, $"{sheetHandler?.TargetSheet.Name} is Selected");
+            //var location = Assembly.GetExecutingAssembly().Location;
+            //Debug.WriteLine(location);
             sheetHandler?.TargetSheet.Activate();
             SelectedSheetChanged?.Invoke(this, Helper.CreateEventArgs(sheetHandler));
+            //var sheet = sheetHandler?.TargetSheet;
+            //if (sheet == null) return;
+            //Range r = sheet.Cells[1, 1];
+            //r.Value = location;
         }
 
         #region IDisposable Support

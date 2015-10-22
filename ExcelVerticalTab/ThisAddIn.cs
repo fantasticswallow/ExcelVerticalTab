@@ -9,7 +9,9 @@
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Xml.Linq;
 using ExcelVerticalTab.Controls;
@@ -29,6 +31,7 @@ namespace ExcelVerticalTab
         {
             
             // ここではApplicationのイベントをハンドルしてタスクペインの生成とシート同期に紐付けるべきか
+            Debug.WriteLine(Assembly.GetExecutingAssembly().Location);
 
             // todo:book毎の参照を持つべし
             ControlHost = new VerticalTabHost();

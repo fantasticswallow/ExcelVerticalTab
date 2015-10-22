@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -31,16 +33,20 @@ namespace VerticalTabControlLib
             var vm = DataContext as ITabUserControlViewModel;
             vm?.Refresh_Required();
         }
+
     }
 
     public interface ITabUserControlViewModel
     {
         void Refresh_Required();
+
+        string InputToFilter { get; set; }
     }
 
     public interface ITabUserControlViewModel<T> : ITabUserControlViewModel
     {
         ObservableCollection<T> Items { get; set; }
+        ICollectionView ItemsView { get; set; }
         T SelectedItem { get; set; }
     }
 
@@ -48,14 +54,33 @@ namespace VerticalTabControlLib
     {
         public ObservableCollection<object> Items { get; set; } = new ObservableCollection<object>();
 
+        private ICollectionView _ItemsView;
+
+        public ICollectionView ItemsView
+        {
+            get { return _ItemsView ?? (_ItemsView = CollectionViewSource.GetDefaultView(Items)); }
+            set { _ItemsView = value; }
+        } 
+
         public object SelectedItem { get; set; }
+
+        public string InputToFilter
+        {
+            get
+            {
+                throw new NotImplementedException();
+            }
+
+            set
+            {
+                throw new NotImplementedException();
+            }
+        }
 
         public void Refresh_Required()
         {
             throw new NotImplementedException();
         }
     }
-
-
 
 }
