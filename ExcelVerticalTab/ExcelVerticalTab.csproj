@@ -166,6 +166,7 @@
     </Compile>
     <Compile Include="EventArgs.cs" />
     <Compile Include="Helper.cs" />
+    <Compile Include="Menu\Menu.cs" />
     <Compile Include="Properties\Annotations.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>
@@ -204,7 +205,9 @@
     </Compile>
     <AppDesigner Include="Properties\" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <EmbeddedResource Include="Menu\Menu.xml" />
+  </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\VerticalTabControl\VerticalTabControl.csproj">
       <Project>{ceea8758-b4b7-4931-b3cc-df41eef15559}</Project>

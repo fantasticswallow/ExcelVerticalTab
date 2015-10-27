@@ -36,11 +36,12 @@ namespace ExcelVerticalTab
             // todo:book毎の参照を持つべし
             ControlHost = new VerticalTabHost();
             ControlHost.Initialize();
-            var pane = CustomTaskPanes.Add(ControlHost, "タブ");
-            pane.DockPosition = Office.MsoCTPDockPosition.msoCTPDockPositionLeft;
-            pane.Visible = true;
+            CurrentPane = CustomTaskPanes.Add(ControlHost, "タブ");
+            CurrentPane.DockPosition = Office.MsoCTPDockPosition.msoCTPDockPositionLeft;
+            CurrentPane.Visible = true;
             
             this.Application.WorkbookActivate += Application_WorkbookActivate;
+            // クローズ時の破棄をどうするか
         }
 
         private void Application_WorkbookActivate(Excel.Workbook Wb)
@@ -51,9 +52,18 @@ namespace ExcelVerticalTab
             ControlHost.AssignWorkbookHandler(handler);
         }
 
+
+
         private void ThisAddIn_Shutdown(object sender, System.EventArgs e)
         {
         }
+
+        protected override Office.IRibbonExtensibility CreateRibbonExtensibilityObject()
+        {
+            return new Menu();
+        }
+
+        public CustomTaskPane CurrentPane { get; private set; }
 
         #region VSTO で生成されたコード
 
