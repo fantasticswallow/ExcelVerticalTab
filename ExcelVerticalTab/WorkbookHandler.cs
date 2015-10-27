@@ -14,7 +14,6 @@ using System.Windows.Data;
 using ExcelVerticalTab.Annotations;
 using Microsoft.Office.Interop.Excel;
 using VerticalTabControlLib;
-using VerticalTabControlLib.Migemo;
 
 namespace ExcelVerticalTab
 {
@@ -71,29 +70,65 @@ namespace ExcelVerticalTab
         }
         #endregion
 
-        private Regex filterRegex;
         private void ExecuteFilter()
         {
+            Regex r = null;
             if (string.IsNullOrWhiteSpace(InputToFilter))
             {
                 ItemsView.Filter = null;
                 ItemsView.Refresh();
+                SelectFirst();
                 return;
             }
 
+            // 一旦保留
             //using (var m = Migemo.GetDefault())
             //{
-            //    filterRegex = m.GetRegex(InputToFilter);
+            //    Debug.WriteLine(m.Query(InputToFilter));
+            //    try
+            //    {
+            //        r = m.GetRegex(InputToFilter);
+            //    }
+            //    catch (Exception e)
+            //    {
+            //        Debug.WriteLine(e.Message);
+            //        r = null;
+            //    }
+                
             //}
 
-            Predicate<object> filter = x =>
+            Predicate<object> filter;
+            if (r == null)
             {
-                var s = x as SheetHandler;
-                return (s?.Header ?? "").Contains(InputToFilter); // filterRegex.IsMatch(s?.Header ?? "");
-            };
-
+                filter = x =>
+                {
+                    var s = x as SheetHandler;
+                    return (s?.Header ?? "").Contains(InputToFilter);
+                };
+            }
+            else
+            {
+                filter = x =>
+                {
+                    var s = x as SheetHandler;
+                    return r.IsMatch(s?.Header ?? "");
+                };
+            }
+            
             ItemsView.Filter = filter;
-            // Refresh呼ぶべきなのか
+            
+            SelectFirst();
+            
+        }
+
+        private void SelectFirst()
+        {
+            if (SelectedItem != null) return;
+            
+            var first = ItemsView.OfType<SheetHandler>().FirstOrDefault();
+            if (first != null)
+                SelectedItem = first;
+            
         }
 
         private void Initialize()
