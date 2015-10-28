@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.Globalization;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.CompilerServices;
@@ -96,14 +97,17 @@ namespace ExcelVerticalTab
             //    }
                 
             //}
-
+            var comparer = StringComparer.Create(CultureInfo.CurrentCulture, true);
+            
             Predicate<object> filter;
             if (r == null)
             {
                 filter = x =>
                 {
                     var s = x as SheetHandler;
-                    return (s?.Header ?? "").Contains(InputToFilter);
+                    var source = s?.Header ?? "";
+                    const CompareOptions options = CompareOptions.IgnoreCase | CompareOptions.IgnoreKanaType | CompareOptions.IgnoreNonSpace | CompareOptions.IgnoreSymbols | CompareOptions.IgnoreWidth;
+                    return CultureInfo.CurrentCulture.CompareInfo.IndexOf(source, InputToFilter, options) >= 0;
                 };
             }
             else

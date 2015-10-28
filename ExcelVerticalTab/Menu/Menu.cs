@@ -58,7 +58,21 @@ namespace ExcelVerticalTab
 
         public void chkVisibility_Changed(Office.IRibbonControl control, bool isHide)
         {
-            Globals.ThisAddIn.CurrentPane.Visible = !isHide;
+            var book = Globals.ThisAddIn.Application.ActiveWorkbook;
+            if (book == null) return;
+
+            var pane = Globals.ThisAddIn.Panes.GetValueOrDefault(book);
+            if (pane == null) return;
+            
+            pane.Pane.Visible = !isHide;
+        }
+
+        public void cmdRefresh_Click(Office.IRibbonControl control)
+        {
+            var book = Globals.ThisAddIn.Application.ActiveWorkbook;
+            if (book == null) return;
+
+            Globals.ThisAddIn.OnActivate(book);            
         }
 
         #endregion

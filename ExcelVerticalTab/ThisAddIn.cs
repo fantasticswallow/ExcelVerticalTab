@@ -26,33 +26,40 @@ namespace ExcelVerticalTab
     {
         private VerticalTabHost ControlHost { get; set; }
 
+        public ConcurrentDictionary<Excel.Workbook, PaneAndControl> Panes { get; } = new ConcurrentDictionary<Excel.Workbook, PaneAndControl>(); 
+
         public ConcurrentDictionary<Excel.Workbook, WorkbookHandler> Handlers { get; } = new ConcurrentDictionary<Excel.Workbook, WorkbookHandler>(); 
         private void ThisAddIn_Startup(object sender, System.EventArgs e)
-        {
-            
-            // ここではApplicationのイベントをハンドルしてタスクペインの生成とシート同期に紐付けるべきか
-            Debug.WriteLine(Assembly.GetExecutingAssembly().Location);
-
-            // todo:book毎の参照を持つべし
-            ControlHost = new VerticalTabHost();
-            ControlHost.Initialize();
-            CurrentPane = CustomTaskPanes.Add(ControlHost, "タブ");
-            CurrentPane.DockPosition = Office.MsoCTPDockPosition.msoCTPDockPositionLeft;
-            CurrentPane.Visible = true;
-            
+        { 
             this.Application.WorkbookActivate += Application_WorkbookActivate;
             // クローズ時の破棄をどうするか
         }
 
-        private void Application_WorkbookActivate(Excel.Workbook Wb)
+        private PaneAndControl CreatePane(Excel.Workbook wb)
         {
-            var handler = Handlers.GetOrAdd(Wb, x => new WorkbookHandler(x));
-            // タブの同期
-            handler.SyncWorksheets();
-            ControlHost.AssignWorkbookHandler(handler);
+            var control = new VerticalTabHost();
+            control.Initialize();
+
+            var pane = CustomTaskPanes.Add(control, "VTab");
+            pane.DockPosition = Office.MsoCTPDockPosition.msoCTPDockPositionLeft;
+            pane.Visible = true;
+
+            return new PaneAndControl(pane, control);
         }
 
+        private void Application_WorkbookActivate(Excel.Workbook Wb)
+        {
+            OnActivate(Wb);
+        }
 
+        public void OnActivate(Excel.Workbook wb)
+        {
+            var pane = Panes.GetOrAdd(wb, x => CreatePane(x));
+            var handler = Handlers.GetOrAdd(wb, x => new WorkbookHandler(x));
+            // タブの同期
+            handler.SyncWorksheets();
+            pane.Control.AssignWorkbookHandler(handler);
+        }
 
         private void ThisAddIn_Shutdown(object sender, System.EventArgs e)
         {
@@ -62,8 +69,6 @@ namespace ExcelVerticalTab
         {
             return new Menu();
         }
-
-        public CustomTaskPane CurrentPane { get; private set; }
 
         #region VSTO で生成されたコード
 
@@ -79,4 +84,17 @@ namespace ExcelVerticalTab
         
         #endregion
     }
+
+    public class PaneAndControl
+    {
+        public PaneAndControl(CustomTaskPane pane, VerticalTabHost control)
+        {
+            Pane = pane;
+            Control = control;
+        }
+
+        public CustomTaskPane Pane { get; }
+        public VerticalTabHost Control { get; }
+    }
+
 }

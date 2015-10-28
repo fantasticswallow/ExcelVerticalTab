@@ -4,8 +4,9 @@
     <tabs>
       <tab idMso="TabAddIns" label="VTab">
         <group id="General"
-               label="General">
-          <toggleButton id="chkVisibility" label="Hide" onAction="chkVisibility_Changed"/>
+               label="VerticalTab">
+          <toggleButton id="chkVisibility" size="large" label="Hide" onAction="chkVisibility_Changed" imageMso="DiagramReverseClassic"/>
+          <button id="cmdRefresh" size="large" label="Refresh" onAction="cmdRefresh_Click" imageMso="RecurrenceEdit"/>
         </group>
       </tab>
     </tabs>
