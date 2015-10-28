@@ -5,7 +5,8 @@
       <tab idMso="TabAddIns" label="VTab">
         <group id="General"
                label="VerticalTab">
-          <toggleButton id="chkVisibility" size="large" label="Hide" onAction="chkVisibility_Changed" imageMso="DiagramReverseClassic"/>
+          <toggleButton id="chkVisibility" size="large" label="Hide" onAction="chkVisibility_Changed" imageMso="DiagramReverseClassic"
+                        getPressed="GetPanesVisibility"/>
           <button id="cmdRefresh" size="large" label="Refresh" onAction="cmdRefresh_Click" imageMso="RecurrenceEdit"/>
         </group>
       </tab>

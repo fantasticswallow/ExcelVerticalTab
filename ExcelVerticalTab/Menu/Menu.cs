@@ -75,6 +75,22 @@ namespace ExcelVerticalTab
             Globals.ThisAddIn.OnActivate(book);            
         }
 
+        public bool GetPanesVisibility(Office.IRibbonControl control)
+        {
+            var book = Globals.ThisAddIn.Application.ActiveWorkbook;
+            if (book == null) return false;
+
+            var pane = Globals.ThisAddIn.Panes.GetValueOrDefault(book);
+            if (pane == null) return false;
+
+            return !pane.Pane.Visible;
+        }
+
+        public void InvalidatePanesVisibility()
+        {
+            ribbon.InvalidateControl("chkVisibility");
+        }
+
         #endregion
 
         #region ヘルパー

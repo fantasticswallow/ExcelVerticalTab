@@ -30,7 +30,7 @@ namespace ExcelVerticalTab.Controls
         {
             var host = new ElementHost()
             {
-                Dock = DockStyle.Right,
+                Dock = DockStyle.Fill,
                 Child = TabControl,
             };
             

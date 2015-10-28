@@ -24,11 +24,11 @@ namespace ExcelVerticalTab
 {
     public partial class ThisAddIn
     {
-        private VerticalTabHost ControlHost { get; set; }
-
         public ConcurrentDictionary<Excel.Workbook, PaneAndControl> Panes { get; } = new ConcurrentDictionary<Excel.Workbook, PaneAndControl>(); 
 
         public ConcurrentDictionary<Excel.Workbook, WorkbookHandler> Handlers { get; } = new ConcurrentDictionary<Excel.Workbook, WorkbookHandler>(); 
+
+        private Menu RibbonMenu { get; set; }
         private void ThisAddIn_Startup(object sender, System.EventArgs e)
         { 
             this.Application.WorkbookActivate += Application_WorkbookActivate;
@@ -44,7 +44,14 @@ namespace ExcelVerticalTab
             pane.DockPosition = Office.MsoCTPDockPosition.msoCTPDockPositionLeft;
             pane.Visible = true;
 
+            pane.VisibleChanged += Pane_VisibleChanged;
+
             return new PaneAndControl(pane, control);
+        }
+
+        private void Pane_VisibleChanged(object sender, EventArgs e)
+        {
+            RibbonMenu?.InvalidatePanesVisibility();
         }
 
         private void Application_WorkbookActivate(Excel.Workbook Wb)
@@ -59,15 +66,19 @@ namespace ExcelVerticalTab
             // タブの同期
             handler.SyncWorksheets();
             pane.Control.AssignWorkbookHandler(handler);
+
+            RibbonMenu?.InvalidatePanesVisibility();
         }
 
         private void ThisAddIn_Shutdown(object sender, System.EventArgs e)
         {
+            
         }
 
         protected override Office.IRibbonExtensibility CreateRibbonExtensibilityObject()
         {
-            return new Menu();
+            RibbonMenu = new Menu();
+            return RibbonMenu;
         }
 
         #region VSTO で生成されたコード
