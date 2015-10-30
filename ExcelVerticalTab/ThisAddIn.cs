@@ -29,6 +29,7 @@ namespace ExcelVerticalTab
         public ConcurrentDictionary<Excel.Workbook, WorkbookHandler> Handlers { get; } = new ConcurrentDictionary<Excel.Workbook, WorkbookHandler>(); 
 
         private Menu RibbonMenu { get; set; }
+
         private void ThisAddIn_Startup(object sender, System.EventArgs e)
         { 
             this.Application.WorkbookActivate += Application_WorkbookActivate;
@@ -72,7 +73,14 @@ namespace ExcelVerticalTab
 
         private void ThisAddIn_Shutdown(object sender, System.EventArgs e)
         {
-            
+            Application.WorkbookActivate -= Application_WorkbookActivate;
+
+            foreach (var handler in Handlers.Values)
+            {
+                handler.Dispose();
+            }
+
+            Handlers.Clear();
         }
 
         protected override Office.IRibbonExtensibility CreateRibbonExtensibilityObject()

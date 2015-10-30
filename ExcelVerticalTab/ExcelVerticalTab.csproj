@@ -158,6 +158,7 @@
     can be found.
   -->
   <ItemGroup>
+    <Compile Include="WindowMessageHandler.cs" />
     <Compile Include="Controls\VerticalTabHost.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -206,7 +207,9 @@
     <AppDesigner Include="Properties\" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Menu\Menu.xml" />
+    <EmbeddedResource Include="Menu\Menu.xml">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\VerticalTabControl\VerticalTabControl.csproj">

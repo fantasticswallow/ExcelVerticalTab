@@ -23,9 +23,12 @@ namespace ExcelVerticalTab
         public WorkbookHandler(Workbook workbook)
         {
             TargetWorkbook = workbook;
+            MsgHandler = new WindowMessageHandler(workbook.Application);
             Initialize();
         }
         public Workbook TargetWorkbook { get; }
+
+        public WindowMessageHandler MsgHandler { get; }
 
         public ObservableCollection<SheetHandler> Items { get; set; } = new ObservableCollection<SheetHandler>();
 
@@ -143,6 +146,8 @@ namespace ExcelVerticalTab
             TargetWorkbook.SheetBeforeDelete += TargetWorkbook_SheetBeforeDelete;
             // シートアクティブ
             TargetWorkbook.SheetActivate += TargetWorkbook_SheetActivate;
+
+            MsgHandler.RefreshRequired += MsgHandlerOnRefreshRequired;
         }
 
         private void RemoveHandler()
@@ -153,6 +158,8 @@ namespace ExcelVerticalTab
             TargetWorkbook.SheetBeforeDelete -= TargetWorkbook_SheetBeforeDelete;
             // シートアクティブ
             TargetWorkbook.SheetActivate -= TargetWorkbook_SheetActivate;
+
+            MsgHandler.RefreshRequired -= MsgHandlerOnRefreshRequired;
 
         }
 
@@ -194,6 +201,14 @@ namespace ExcelVerticalTab
             SelectedItem = GetSheetHandler(sheet);
         }
 
+        private void MsgHandlerOnRefreshRequired(object sender, EventArgs eventArgs)
+        {
+            _suppressChanged = true;
+            SyncWorksheets();
+            _suppressChanged = false;
+
+        }
+
         public void Refresh_Required()
         {
             SyncWorksheets();
@@ -201,8 +216,11 @@ namespace ExcelVerticalTab
 
         public event EventHandler<EventArgs<SheetHandler>> SelectedSheetChanged;
 
+        private bool _suppressChanged;
+
         protected void OnSelectedSheetChanged(SheetHandler sheetHandler)
         {
+            if (_suppressChanged) return;
             Debug.WriteLineIf(sheetHandler != null, $"{sheetHandler?.TargetSheet.Name} is Selected");
             //var location = Assembly.GetExecutingAssembly().Location;
             //Debug.WriteLine(location);
@@ -228,16 +246,18 @@ namespace ExcelVerticalTab
 
                 // TODO: アンマネージ リソース (アンマネージ オブジェクト) を解放し、下のファイナライザーをオーバーライドします。
                 // TODO: 大きなフィールドを null に設定します。
+                MsgHandler.Dispose();
 
                 disposedValue = true;
             }
         }
 
         // TODO: 上の Dispose(bool disposing) にアンマネージ リソースを解放するコードが含まれる場合にのみ、ファイナライザーをオーバーライドします。
-        // ~WorkbookHandler() {
-        //   // このコードを変更しないでください。クリーンアップ コードを上の Dispose(bool disposing) に記述します。
-        //   Dispose(false);
-        // }
+        ~WorkbookHandler()
+        {
+            // このコードを変更しないでください。クリーンアップ コードを上の Dispose(bool disposing) に記述します。
+            Dispose(false);
+        }
 
         // このコードは、破棄可能なパターンを正しく実装できるように追加されました。
         public void Dispose()
@@ -245,7 +265,7 @@ namespace ExcelVerticalTab
             // このコードを変更しないでください。クリーンアップ コードを上の Dispose(bool disposing) に記述します。
             Dispose(true);
             // TODO: 上のファイナライザーがオーバーライドされる場合は、次の行のコメントを解除してください。
-            // GC.SuppressFinalize(this);
+            GC.SuppressFinalize(this);
         }
         #endregion
 
