@@ -1,0 +1,35 @@
+﻿<UserControl x:Class="VerticalTabControlLib.InsertPositionAdorner"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:ed="http://schemas.microsoft.com/expression/2010/drawing"
+             xmlns:local="clr-namespace:VerticalTabControlLib"
+             mc:Ignorable="d" 
+             d:DesignHeight="300" d:DesignWidth="300">
+    <Grid>
+        <Grid Margin="0, -4">
+        <ed:RegularPolygon Fill="#FF212121" HorizontalAlignment="Left" Height="10" InnerRadius="1" PointCount="3" Stretch="Fill" Stroke="Black" VerticalAlignment="Center" Width="10" RenderTransformOrigin="0.5,0.5" StrokeThickness="0">
+            <ed:RegularPolygon.RenderTransform>
+                <TransformGroup>
+                    <ScaleTransform />
+                    <SkewTransform AngleY="0" AngleX="0"/>
+                    <RotateTransform Angle="90"/>
+                    <TranslateTransform/>
+                </TransformGroup>
+            </ed:RegularPolygon.RenderTransform>
+        </ed:RegularPolygon>
+        <Rectangle Fill="#FF212121" VerticalAlignment="Center" Margin="8,0" Stroke="#FF212121" Height="2" StrokeThickness="0"/>
+        <ed:RegularPolygon Fill="#FF212121" HorizontalAlignment="Right" Height="10" Width="10" InnerRadius="1" PointCount="3" Stretch="Fill" Stroke="#FF212121" VerticalAlignment="Center" RenderTransformOrigin="0.5,0.5">
+            <ed:RegularPolygon.RenderTransform>
+                <TransformGroup>
+                    <ScaleTransform/>
+                    <SkewTransform/>
+                    <RotateTransform Angle="270"/>
+                    <TranslateTransform/>
+                </TransformGroup>
+            </ed:RegularPolygon.RenderTransform>
+        </ed:RegularPolygon>
+    </Grid>
+    </Grid>
+</UserControl>

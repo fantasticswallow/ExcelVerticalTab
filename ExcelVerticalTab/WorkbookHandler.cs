@@ -11,6 +11,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Data;
 using ExcelVerticalTab.Annotations;
 using Microsoft.Office.Interop.Excel;
@@ -138,6 +139,42 @@ namespace ExcelVerticalTab
             
         }
 
+        public void TryMoved(object source, object target)
+        {
+            // D&Dによる並べ替えテスト
+            var src = source as SheetHandler;
+            var dst = target as SheetHandler;
+
+            _suppressChanged = true;
+
+            // Sheetの移動
+            if (dst == null)
+            {
+                // ラストへ
+                var last = Items.Last();
+                src?.TargetSheet.Move(After: last.TargetSheet);
+            }
+            else
+            {
+                src?.TargetSheet.Move(Before: dst.TargetSheet);
+            }
+
+            var srcIndex = Items.IndexOf(src);
+            var dstIndex = dst == null ? Items.Count - 1 : Items.IndexOf(dst);
+            if (dst != null && srcIndex < dstIndex)
+            {
+                dstIndex = Math.Max(dstIndex - 1, 0);
+            }
+
+            if (srcIndex != dstIndex)
+                Items.Move(srcIndex, dstIndex); // SyncWorkSheets使わずに自前でMoveするとアニメーションする！
+
+            _suppressChanged = false;
+
+            // DataSourceの同期
+            //SyncWorksheets();
+        }
+
         private void Initialize()
         {
             // シート追加時
@@ -203,6 +240,8 @@ namespace ExcelVerticalTab
 
         private void MsgHandlerOnRefreshRequired(object sender, EventArgs eventArgs)
         {
+            if (_suppressChanged) return;
+
             _suppressChanged = true;
             SyncWorksheets();
             _suppressChanged = false;

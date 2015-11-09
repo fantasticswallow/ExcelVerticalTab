@@ -34,6 +34,11 @@ namespace VerticalTabControlLib
             vm?.Refresh_Required();
         }
 
+        private void LstTab_OnTryMoved(object sender, TryMoveEventArgs e)
+        {
+            var vm = DataContext as ITabUserControlViewModel;
+            vm?.TryMoved(e.Source, e.Target);
+        }
     }
 
     public interface ITabUserControlViewModel
@@ -41,6 +46,8 @@ namespace VerticalTabControlLib
         void Refresh_Required();
 
         string InputToFilter { get; set; }
+
+        void TryMoved(object source, object target);
     }
 
     public interface ITabUserControlViewModel<T> : ITabUserControlViewModel
@@ -78,6 +85,11 @@ namespace VerticalTabControlLib
         }
 
         public void Refresh_Required()
+        {
+            throw new NotImplementedException();
+        }
+
+        public void TryMoved(object source, object target)
         {
             throw new NotImplementedException();
         }

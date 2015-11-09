@@ -3,6 +3,8 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
+             xmlns:ei="http://schemas.microsoft.com/expression/2010/interactions"
              xmlns:local="clr-namespace:VerticalTabControlLib"
              mc:Ignorable="d" 
              d:DesignHeight="300" d:DesignWidth="300">
@@ -101,6 +103,18 @@
         </Style>
         <Style x:Key="ListBoxStyle" TargetType="{x:Type ListBox}">
             <Setter Property="Padding" Value="1,1,-1,1"/>
+            <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+            <Setter Property="ItemsPanel">
+                <Setter.Value>
+                    <ItemsPanelTemplate>
+                        <StackPanel>
+                            <i:Interaction.Behaviors>
+                                <ei:FluidMoveBehavior AppliesTo="Children" Duration="0:0:0.12"></ei:FluidMoveBehavior>
+                            </i:Interaction.Behaviors>
+                        </StackPanel>
+                    </ItemsPanelTemplate>
+                </Setter.Value>
+            </Setter>
         </Style>
         <Style x:Key="RefreshButtonStyle" TargetType="{x:Type Button}">
             <Setter Property="Margin" Value="2"/>
@@ -121,15 +135,19 @@
                  Style="{StaticResource TextBoxStyle}"
                  Text="{Binding InputToFilter, UpdateSourceTrigger=PropertyChanged}"/>
         
-        <ListBox x:Name="lstTab" 
+        <local:CustomListBox x:Name="lstTab" 
                  d:DataContext="{d:DesignInstance {x:Type local:TabUserControlViewModelMock}}"
                  Grid.Row="1"
                  Style="{StaticResource ListBoxStyle}"
                  SelectedItem="{Binding SelectedItem}"
                  ItemsSource="{Binding ItemsView}"
-                 ItemContainerStyle="{StaticResource TabItemStyle}">
+                 ItemContainerStyle="{StaticResource TabItemStyle}"
+                 SelectionMode="Single"
+                 EnableSortByDragAndDrop="True"
+                 AllowDrop="True"
+                 TryMoved="LstTab_OnTryMoved">
 
-        </ListBox>
+        </local:CustomListBox>
 
         <Button x:Name="cmdRefresh" Style="{StaticResource RefreshButtonStyle}"
                 Grid.Row="2"
