@@ -145,6 +145,8 @@ namespace ExcelVerticalTab
             var src = source as SheetHandler;
             var dst = target as SheetHandler;
 
+            if (src == null) return;
+
             _suppressChanged = true;
 
             // Sheetの移動
