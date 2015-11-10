@@ -105,7 +105,10 @@ namespace VerticalTabControlLib
             base.OnPreviewMouseMove(e);
             if (!EnableSortByDragAndDrop) return;
             if (_targetContainer?.DataContext == null) return;
-            
+
+            var listBoxItem = _targetContainer as ListBoxItem;
+            if (listBoxItem != null && !listBoxItem.IsSelected)
+                return;
 
             // 移動量が十分か検証する
             var currentPosition = PointToScreen(e.GetPosition(_targetContainer));

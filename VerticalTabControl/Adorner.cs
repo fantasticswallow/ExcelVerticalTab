@@ -128,10 +128,9 @@ namespace VerticalTabControlLib
                 Width = bounds.Width,
                 Height = bounds.Height,
                 Fill = new VisualBrush(dragTarget) { Opacity = ThisOpacity },
+                HorizontalAlignment = HorizontalAlignment.Left,
+                VerticalAlignment = VerticalAlignment.Top,
             };
-
-            ghost.HorizontalAlignment = HorizontalAlignment.Left;
-            ghost.VerticalAlignment = VerticalAlignment.Top;
 
             return new DragAdorner(adornedElement, ghost)
             {

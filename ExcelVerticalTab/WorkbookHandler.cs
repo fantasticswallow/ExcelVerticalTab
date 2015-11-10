@@ -145,7 +145,11 @@ namespace ExcelVerticalTab
             var src = source as SheetHandler;
             var dst = target as SheetHandler;
 
-            if (src == null) return;
+            if (src == null)
+            {
+                Debug.WriteLine("srcがnull");
+                return;
+            }
 
             _suppressChanged = true;
 
