@@ -41,10 +41,12 @@ namespace ExcelVerticalTab
             var control = new VerticalTabHost();
             control.Initialize();
 
-            var pane = CustomTaskPanes.Add(control, "VTab");
+            // ActiveWindowがずれてしまうことがあるっぽいような
+            var w = wb.Windows.OfType<Excel.Window>().FirstOrDefault() ?? Application.ActiveWindow; // ActiveWindowは保険
+            var pane = CustomTaskPanes.Add(control, "VTab", w);
             pane.DockPosition = Office.MsoCTPDockPosition.msoCTPDockPositionLeft;
             pane.Visible = true;
-
+            
             pane.VisibleChanged += Pane_VisibleChanged;
 
             return new PaneAndControl(pane, control);
