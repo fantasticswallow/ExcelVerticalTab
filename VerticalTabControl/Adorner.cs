@@ -156,11 +156,6 @@ namespace VerticalTabControlLib
             control.SetValue(HorizontalAlignmentProperty, HorizontalAlignment.Stretch);
             control.SetValue(VerticalAlignmentProperty, isBottom ? VerticalAlignment.Bottom : VerticalAlignment.Top);
 
-            // 何故か縮むのでサイズをセットする
-            // adornedbaseのArrangeが怪しい…
-            //control.Height = adornedElement.RenderSize.Height;
-            //control.Width = adornedElement.RenderSize.Width;
-
             return new InsertionAdorner(adornedElement, control)
             {
                 Control = control,

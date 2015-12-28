@@ -34,8 +34,6 @@ namespace ExcelVerticalTab.Controls
                 Child = TabControl,
             };
             
-            // シートとの連携をどこでやるか
-            
             Controls.Add(host);
         }
 

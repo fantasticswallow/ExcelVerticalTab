@@ -89,15 +89,8 @@ namespace VerticalTabControlLib
             _targetContainer = GetContainer(e.OriginalSource as FrameworkElement);
             if (_targetContainer == null) return;
             
-            //_targetData = this.GetItemData(draggedItem);
-            //if (_targetData == null) { return; }
-
             _startPosition = PointToScreen(e.GetPosition(_targetContainer));
-            Debug.WriteLine($"StartPosition:x={_startPosition.X},y={_startPosition.Y}");
-            //_initialPosition = this.PointToScreen(e.GetPosition(this));
-            //_mouseOffsetFromItem = itemsControl.PointToItem(draggedItem, _initialPosition.Value);
-            //_draggedItemIndex = itemsControl.GetItemIndex(_draggedData);
-
+            //Debug.WriteLine($"StartPosition:x={_startPosition.X},y={_startPosition.Y}");
         }
 
         protected override void OnPreviewMouseMove(MouseEventArgs e)
@@ -115,7 +108,7 @@ namespace VerticalTabControlLib
             var delta = (_startPosition - currentPosition);
             if (!delta.IsEnoughMoveForDrug()) return;
 
-            Debug.WriteLine("DragDropStart");
+            //Debug.WriteLine("DragDropStart");
 
             _dragAdorner = _dragAdorner ?? (_dragAdorner = DragAdorner.Create(this, _targetContainer, _startPosition));
 
@@ -132,14 +125,14 @@ namespace VerticalTabControlLib
         {
             base.OnPreviewMouseUp(e);
 
-            Debug.WriteLine("MouseUp");
+            //Debug.WriteLine("MouseUp");
 
             ResetDragAndDropParameter();
         }
 
         private void ResetDragAndDropParameter()
         {
-            Debug.WriteLine("ResetParameter");
+            //Debug.WriteLine("ResetParameter");
 
             _targetContainer = null;
             _startPosition = new Point();
@@ -156,7 +149,7 @@ namespace VerticalTabControlLib
         {
             base.OnPreviewDragEnter(e);
 
-            Debug.WriteLine("PreviewDragEnter");
+            //Debug.WriteLine("PreviewDragEnter");
 
             // のっかったコンテナを取得
             var isBottom = false;
@@ -176,7 +169,7 @@ namespace VerticalTabControlLib
         {
             base.OnPreviewDragOver(e);
 
-            Debug.WriteLine("PreviewDragOver");
+            //Debug.WriteLine("PreviewDragOver");
 
             var currentPosition = PointToScreen(e.GetPosition(this));
             _dragAdorner.SetOffset(currentPosition.X, currentPosition.Y);
@@ -186,7 +179,7 @@ namespace VerticalTabControlLib
         {
             base.OnPreviewDragLeave(e);
 
-            Debug.WriteLine("PreviewDragLeave");
+            //Debug.WriteLine("PreviewDragLeave");
 
             _insertionAdorner?.Dispose();
             _insertionAdorner = null;
