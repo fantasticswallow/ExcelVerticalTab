@@ -116,6 +116,7 @@ namespace ExcelVerticalTab
         {
             Application.WorkbookActivate -= Application_WorkbookActivate;
             Application.WorkbookBeforeClose -= Application_WorkbookBeforeClose;
+            Application.WindowDeactivate -= Application_WindowDeactivate;
 
             foreach (var x in Panes.Values)
             {
