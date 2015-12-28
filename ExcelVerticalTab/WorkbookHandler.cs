@@ -208,6 +208,8 @@ namespace ExcelVerticalTab
 
         public void SyncWorksheets()
         {
+            if (disposedValue) return;
+
             Items.Clear();
             
             foreach (var worksheet in TargetWorkbook.Worksheets.Cast<Worksheet>())

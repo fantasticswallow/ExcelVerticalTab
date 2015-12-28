@@ -1,12 +1,4 @@
-﻿/*
-- [ ] タブの同期
-- [ ] リボンメニュー
-- [ ] タブ移動
-- [ ] コンテキストメニュー
-
-*/
-
-using System;
+﻿using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -24,9 +16,11 @@ namespace ExcelVerticalTab
 {
     public partial class ThisAddIn
     {
-        public ConcurrentDictionary<Excel.Workbook, PaneAndControl> Panes { get; } = new ConcurrentDictionary<Excel.Workbook, PaneAndControl>(); 
+        public ConcurrentDictionary<string, PaneAndControl> Panes { get; } = new ConcurrentDictionary<string, PaneAndControl>(); 
 
-        public ConcurrentDictionary<Excel.Workbook, WorkbookHandler> Handlers { get; } = new ConcurrentDictionary<Excel.Workbook, WorkbookHandler>(); 
+        // public ConcurrentDictionary<Excel.Workbook, WorkbookHandler> Handlers { get; } = new ConcurrentDictionary<Excel.Workbook, WorkbookHandler>(); 
+
+        private ConcurrentQueue<string> CleanQueue { get; } = new ConcurrentQueue<string>(); 
 
         private Menu RibbonMenu { get; set; }
 
@@ -34,6 +28,13 @@ namespace ExcelVerticalTab
         { 
             this.Application.WorkbookActivate += Application_WorkbookActivate;
             // クローズ時の破棄をどうするか
+            this.Application.WorkbookBeforeClose += Application_WorkbookBeforeClose;
+            this.Application.WindowDeactivate += Application_WindowDeactivate;
+        }
+
+        private void Application_WindowDeactivate(Excel.Workbook wb, Excel.Window wn)
+        {
+            ProcessCleanQueue(true);
         }
 
         private PaneAndControl CreatePane(Excel.Workbook wb)
@@ -48,7 +49,7 @@ namespace ExcelVerticalTab
             pane.Visible = true;
             
             pane.VisibleChanged += Pane_VisibleChanged;
-
+            
             return new PaneAndControl(pane, control);
         }
 
@@ -64,8 +65,11 @@ namespace ExcelVerticalTab
 
         public void OnActivate(Excel.Workbook wb)
         {
-            var pane = Panes.GetOrAdd(wb, x => CreatePane(x));
-            var handler = Handlers.GetOrAdd(wb, x => new WorkbookHandler(x));
+            ProcessCleanQueue();
+
+            var pane = Panes.GetOrAdd(wb.Name, _ => CreatePane(wb));
+            var handler = pane.Control.CurrentHandler ?? new WorkbookHandler(wb);
+            // var handler = Handlers.GetOrAdd(wb, x => new WorkbookHandler(x));
             // タブの同期
             handler.SyncWorksheets();
             pane.Control.AssignWorkbookHandler(handler);
@@ -73,16 +77,66 @@ namespace ExcelVerticalTab
             RibbonMenu?.InvalidatePanesVisibility();
         }
 
+        private void Application_WorkbookBeforeClose(Excel.Workbook wb, ref bool cancel)
+        {
+            OnBeforeClose(wb);
+        }
+
+        public void OnBeforeClose(Excel.Workbook wb)
+        {
+            // 掃除キューに登録
+            CleanQueue.Enqueue(wb.Name);
+        }
+
+        private void ProcessCleanQueue(bool onClose = false)
+        {
+            var workbooks = Application.Workbooks.Cast<Excel.Workbook>().ToArray();
+            while (CleanQueue.Count > 0)
+            {
+                var closedBookName = "";
+                if (!CleanQueue.TryDequeue(out closedBookName))
+                {
+                    continue;
+                }
+
+                if (!onClose && workbooks.Any(x => x.Name == closedBookName))
+                {
+                    continue;
+                }
+
+                PaneAndControl pane_control;
+                if (Panes.TryRemove(closedBookName, out pane_control))
+                {
+                    CleanUpPaneAndControl(pane_control);
+                }
+            }
+        }
+
         private void ThisAddIn_Shutdown(object sender, System.EventArgs e)
         {
             Application.WorkbookActivate -= Application_WorkbookActivate;
+            Application.WorkbookBeforeClose -= Application_WorkbookBeforeClose;
 
-            foreach (var handler in Handlers.Values)
+            foreach (var x in Panes.Values)
             {
-                handler.Dispose();
+                CleanUpPaneAndControl(x);
             }
 
-            Handlers.Clear();
+            Panes.Clear();
+        }
+
+        private void CleanUpPaneAndControl(PaneAndControl target)
+        {
+            target.Control.CurrentHandler?.Dispose();
+            try
+            {
+                target.Pane.VisibleChanged -= Pane_VisibleChanged;
+                CustomTaskPanes.Remove(target.Pane);
+            }
+            catch (ObjectDisposedException)
+            {
+                // 無視
+            }
         }
 
         protected override Office.IRibbonExtensibility CreateRibbonExtensibilityObject()

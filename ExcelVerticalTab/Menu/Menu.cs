@@ -61,7 +61,7 @@ namespace ExcelVerticalTab
             var book = Globals.ThisAddIn.Application.ActiveWorkbook;
             if (book == null) return;
 
-            var pane = Globals.ThisAddIn.Panes.GetValueOrDefault(book);
+            var pane = Globals.ThisAddIn.Panes.GetValueOrDefault(book.Name);
             if (pane == null) return;
             
             pane.Pane.Visible = !isHide;
@@ -80,7 +80,7 @@ namespace ExcelVerticalTab
             var book = Globals.ThisAddIn.Application.ActiveWorkbook;
             if (book == null) return false;
 
-            var pane = Globals.ThisAddIn.Panes.GetValueOrDefault(book);
+            var pane = Globals.ThisAddIn.Panes.GetValueOrDefault(book.Name);
             if (pane == null) return false;
 
             return !pane.Pane.Visible;

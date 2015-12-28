@@ -46,6 +46,7 @@ namespace ExcelVerticalTab.Controls
         {
             CurrentHandler = handler;
 
+            TabControl.DataContext = null;
             TabControl.DataContext = handler;
         }
 
