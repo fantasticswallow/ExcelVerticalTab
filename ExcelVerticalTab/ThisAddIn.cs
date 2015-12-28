@@ -34,6 +34,21 @@ namespace ExcelVerticalTab
         { 
             this.Application.WorkbookActivate += Application_WorkbookActivate;
             // クローズ時の破棄をどうするか
+            this.Application.WorkbookDeactivate += Application_WorkbookDeactivate;
+        }
+
+        private Tuple<Excel.Workbook, string, int> closingInfo { get; set; } = null;
+
+        private void Application_WorkbookDeactivate(Excel.Workbook Wb)
+        {
+            if (this.Application.Workbooks.Count == 1)
+            {
+                workbookClosed(Wb);
+            }
+            else
+            {
+                closingInfo = Tuple.Create(Wb, Wb.Name, this.Application.Workbooks.Count);
+            }
         }
 
         private PaneAndControl CreatePane(Excel.Workbook wb)
@@ -64,6 +79,27 @@ namespace ExcelVerticalTab
 
         public void OnActivate(Excel.Workbook wb)
         {
+            if (closingInfo != null)
+            {
+                if (this.Application.Workbooks.Count < closingInfo.Item3)
+                {
+                    var res = true;
+                    foreach (Excel.Workbook wb2 in this.Application.Workbooks)
+                    {
+                        if (wb2.Name == closingInfo.Item2)
+                        {
+                            res = false;
+                            break;
+                        }
+                    }
+                    if (res)
+                    {
+                        workbookClosed(closingInfo.Item1);
+                    }
+                }
+                closingInfo = null;
+            }
+
             var pane = Panes.GetOrAdd(wb, x => CreatePane(x));
             var handler = Handlers.GetOrAdd(wb, x => new WorkbookHandler(x));
             // タブの同期
@@ -71,6 +107,30 @@ namespace ExcelVerticalTab
             pane.Control.AssignWorkbookHandler(handler);
 
             RibbonMenu?.InvalidatePanesVisibility();
+        }
+
+        private void workbookClosed(Excel.Workbook wb)
+        {
+            WorkbookHandler handler = null;
+            if (Handlers.TryRemove(wb, out handler))
+            {
+                handler.Dispose();
+            }
+
+            PaneAndControl pane = null;
+            if (Panes.TryRemove(wb, out pane))
+            {
+                pane.Pane.VisibleChanged -= Pane_VisibleChanged;
+                try
+                {
+                    pane.Pane.Visible = false;
+                    // Windowで破棄されてるとここで死ぬ
+                }
+                catch (Exception)
+                {
+                    // Paneは死んでるし対策はいいかなって
+                }
+            }
         }
 
         private void ThisAddIn_Shutdown(object sender, System.EventArgs e)
