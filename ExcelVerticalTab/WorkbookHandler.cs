@@ -110,7 +110,7 @@ namespace ExcelVerticalTab
                 {
                     var s = x as SheetHandler;
                     var source = s?.Header ?? "";
-                    const CompareOptions options = CompareOptions.IgnoreCase | CompareOptions.IgnoreKanaType | CompareOptions.IgnoreNonSpace | CompareOptions.IgnoreSymbols | CompareOptions.IgnoreWidth;
+                    const CompareOptions options = CompareOptions.IgnoreCase | CompareOptions.IgnoreKanaType | CompareOptions.IgnoreNonSpace | CompareOptions.IgnoreWidth;
                     return CultureInfo.CurrentCulture.CompareInfo.IndexOf(source, InputToFilter, options) >= 0;
                 };
             }

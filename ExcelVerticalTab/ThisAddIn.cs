@@ -46,6 +46,7 @@ namespace ExcelVerticalTab
             var w = wb.Windows.OfType<Excel.Window>().FirstOrDefault() ?? Application.ActiveWindow; // ActiveWindowは保険
             var pane = CustomTaskPanes.Add(control, "VTab", w);
             pane.DockPosition = Office.MsoCTPDockPosition.msoCTPDockPositionLeft;
+            pane.Width = 100;
             pane.Visible = true;
             
             pane.VisibleChanged += Pane_VisibleChanged;
