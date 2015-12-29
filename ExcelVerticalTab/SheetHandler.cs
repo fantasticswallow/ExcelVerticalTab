@@ -12,13 +12,13 @@ namespace ExcelVerticalTab
 {
     public class SheetHandler : INotifyPropertyChanged
     {
-        public SheetHandler(Worksheet sheet)
+        public SheetHandler(dynamic sheet)
         {
             TargetSheet = sheet;
             Initialize();
         }
 
-        public Worksheet TargetSheet { get; }
+        public dynamic TargetSheet { get; }
 
         private string _Header;
         public string Header

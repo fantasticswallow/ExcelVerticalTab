@@ -125,6 +125,7 @@ namespace ExcelVerticalTab
             }
 
             Panes.Clear();
+            System.Runtime.InteropServices.Marshal.ReleaseComObject(Application);
         }
 
         private void CleanUpPaneAndControl(PaneAndControl target)

@@ -212,15 +212,15 @@ namespace ExcelVerticalTab
 
             Items.Clear();
             
-            foreach (var worksheet in TargetWorkbook.Worksheets.Cast<Worksheet>())
+            foreach (var worksheet in TargetWorkbook.Sheets)
             {
                 Items.Add(new SheetHandler(worksheet));    
             }
-
+            
             SelectedItem = GetSheetHandler(TargetWorkbook.ActiveSheet);
         }
 
-        private SheetHandler GetSheetHandler(Worksheet sheet)
+        private SheetHandler GetSheetHandler(dynamic sheet)
         {
             return Items.FirstOrDefault(x => x.TargetSheet == sheet);
         }
@@ -231,19 +231,19 @@ namespace ExcelVerticalTab
         }
         private void TargetWorkbook_SheetBeforeDelete(object Sh)
         {
-            var sheet = Sh as Worksheet;
-            if (sheet == null) return;
+            //var sheet = Sh as Worksheet;
+            //if (sheet == null) return;
 
-            Items.Remove(GetSheetHandler(sheet));
+            Items.Remove(GetSheetHandler(Sh));
         }
-        private void TargetWorkbook_SheetActivate(object Sh)
+        private void TargetWorkbook_SheetActivate(dynamic Sh)
         {
-            var sheet = Sh as Worksheet;
-            if (sheet == null) return;
+            //var sheet = Sh as Worksheet;
+            //if (sheet == null) return;
 
-            Debug.WriteLine($"{sheet.Name} is Activate");
+            Debug.WriteLine($"{Sh.Name} is Activate");
 
-            SelectedItem = GetSheetHandler(sheet);
+            SelectedItem = GetSheetHandler(Sh);
         }
 
         private void MsgHandlerOnRefreshRequired(object sender, EventArgs eventArgs)
