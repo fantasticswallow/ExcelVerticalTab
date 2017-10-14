@@ -79,7 +79,21 @@ namespace VerticalTabControlLib
             if (originalSource == null) return null;
             return ContainerFromElement(originalSource) as FrameworkElement;
         }
-        
+
+        // Arrow keys don't work after programmatically setting ListView.SelectedItem
+        // https://stackoverflow.com/questions/7363777/arrow-keys-dont-work-after-programmatically-setting-listview-selecteditem
+        protected override void OnSelectionChanged(SelectionChangedEventArgs e)
+        {
+            base.OnSelectionChanged(e);
+
+            var container = (UIElement)ItemContainerGenerator.ContainerFromItem(SelectedItem);
+
+            if (container != null && IsFocused)
+            {
+                container.Focus();
+            }
+        }
+
         // 左クリック前
         protected override void OnPreviewMouseLeftButtonDown(MouseButtonEventArgs e)
         {

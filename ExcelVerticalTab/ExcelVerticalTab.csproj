@@ -216,6 +216,7 @@
       <DesignTime>True</DesignTime>
     </Compile>
     <None Include="ExcelVerticalTab_TemporaryKey.pfx" />
+    <None Include="PPCustomZoom_TemporaryKey.pfx" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
@@ -255,10 +256,10 @@
     <SignManifests>true</SignManifests>
   </PropertyGroup>
   <PropertyGroup>
-    <ManifestKeyFile>ExcelVerticalTab_TemporaryKey.pfx</ManifestKeyFile>
+    <ManifestKeyFile>PPCustomZoom_TemporaryKey.pfx</ManifestKeyFile>
   </PropertyGroup>
   <PropertyGroup>
-    <ManifestCertificateThumbprint>31D3E5DDDB6191712BE52EB59B7EB0F2575765FA</ManifestCertificateThumbprint>
+    <ManifestCertificateThumbprint>D43E5DE33C1036CCEBAE5059696B77E356CE4106</ManifestCertificateThumbprint>
   </PropertyGroup>
   <!-- Include the build rules for a C# project. -->
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
