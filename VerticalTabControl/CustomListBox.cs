@@ -88,7 +88,7 @@ namespace VerticalTabControlLib
 
             var container = (UIElement)ItemContainerGenerator.ContainerFromItem(SelectedItem);
 
-            if (container != null)
+            if (container != null && IsFocused)
             {
                 container.Focus();
             }
